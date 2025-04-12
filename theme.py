@@ -1,23 +1,14 @@
 import json
 
-Theme = None
+class Theme():
+    obj = None
 
-def load_theme(filepath = "themes/basic.json"):
-    global Theme
-    with open(filepath, encoding="UTF_8") as data:
-        Theme = json.dumps(data.read())
+    def load_theme(filepath = "themes/basic.json"):
+        with open(filepath, encoding="UTF_8") as data:
+            Theme.obj = json.load(data)
 
-""" class Theme():
-    def load(filepath = "themes/basic.txt"):
-        with open(filepath, 'r', encoding = "UTF-8") as f:
-            Theme.hor = f.readline().strip()
-            Theme.vert = f.readline().strip()
-            Theme.tl = f.readline().strip()
-            Theme.tr = f.readline().strip()
-            Theme.bl = f.readline().strip()
-            Theme.br = f.readline().strip()
-            Theme.block = f.readline().strip()
-
-    def load_json(filepath = "themes/basic.txt"):
-        with open(filepath) as data:
-            self.theme = json.load(data) """
+    def char(char_name):
+        return Theme.obj["chars"][char_name] if (Theme.obj and char_name in Theme.obj["chars"]) else None
+    
+    def fg(tetromino):
+        return Theme.obj["fg"]["tets"][tetromino] if (Theme.obj and tetromino in Theme.obj["fg"]["tets"]) else None

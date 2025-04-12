@@ -57,7 +57,7 @@ class Block():
         return coords
     
     def char(self):
-        return self.color + Theme["chars"]["block"] + Colors.RESET
+        return self.color + Theme.char("block") + Colors.RESET
 
 class Blocks:
     block_list = [

@@ -1,13 +1,12 @@
 from blocks import Blocks, Colors
-import theme
 from theme import Theme
 
 class Board():
     EMPTY_SQUARE = " "
-    BOARD_COLOR = Colors.GREY
+    BOARD_COLOR = Colors.WHITE
 
     def __init__(self, l = 20, w = 10):
-        theme.load_theme()
+        Theme.load_theme()
         self.l = l
         self.w = w
         self.board = [[(Board.EMPTY_SQUARE) for i in range(w)] for j in range(l)]
@@ -17,12 +16,19 @@ class Board():
         return [[x + self.x, y + self.y] for x, y in self.block.coords()]
 
     def at_pos(self, coords):
-        board_char = self.board[coords[1]][coords[0]]
+        x, y = coords
+        board_char = self.board[y][x]
         if board_char != Board.EMPTY_SQUARE:
             return board_char
         if coords in self.block_coords():
             return self.block.char()
         return Board.EMPTY_SQUARE
+    
+    def position_valid(self):
+        for x, y in self.block_coords():
+            if x < 0 or x >= self.w or y >= self.l or (y >= 0 and self.board[y][x] != Board.EMPTY_SQUARE):
+                return False
+        return True
 
     def next_block(self):
         self.block = Blocks.next()
@@ -33,15 +39,15 @@ class Board():
         """Prints the current state of the board in a frame."""
 
         console_width = self.w * 2 + 1
-        board_str = Board.BOARD_COLOR + Theme["chars"]["tl"] + Theme["chars"]["hor"] * console_width + Theme["chars"]["tr"] + '\n'
+        board_str = Board.BOARD_COLOR + Theme.char("tl") + Theme.char("hor") * console_width + Theme.char("tr") + '\n'
 
         for y in range(self.l):
-            board_str += Theme["chars"]["vert"] + " "
+            board_str += Theme.char("vert") + " "
             for x in range(self.w):
                 board_str += self.at_pos([x, y]) + Board.BOARD_COLOR + " "
-            board_str += Theme["chars"]["vert"] + "\n"
+            board_str += Theme.char("vert") + "\n"
 
-        board_str += Theme["chars"]["bl"] + Theme["chars"]["hor"] * console_width + Theme["chars"]["br"] + '\n'
+        board_str += Theme.char("bl") + Theme.char("hor") * console_width + Theme.char("br") + '\n'
 
         print("\x1b[2J\x1b[H")
         print(board_str)

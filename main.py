@@ -1,17 +1,17 @@
 from board import Board
-from win_input import win_input
 import time
+from tui import Keys, Screen
 
 board = Board()
 last_time = time.time()
 move_time = 1.2
 timer = move_time
 
-# disable cursor
-print("\x1b[?25l")
+Screen.show_cursor(False)
 
 def update():
     board.print()
+    print(board.position_valid())
 
 def move_down():
     global timer
@@ -25,16 +25,15 @@ while True:
     last_time = curr_time
     if timer > move_time:
         move_down()
-    key_down = win_input()
-    if key_down == 'a':
+    if Keys.down('a'):
         board.move_left()
-    if key_down == 'd':
+    if Keys.down('d'):
         board.move_right()
-    if key_down == 'w':
+    if Keys.down('w'):
         board.rotate()
-    if key_down == 's':
+    if Keys.down('s'):
         move_down()
-    if key_down == ' ':
+    if Keys.down(' '):
         board.next_block()
-    if key_down != None:
+    if len(Keys.all_down()) > 0:
         update()
