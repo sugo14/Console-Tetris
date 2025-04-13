@@ -3,7 +3,7 @@ import json
 class Theme():
     obj = None
 
-    def load_theme(filepath = "themes/fancy.json"):
+    def load_theme(filepath = "themes/clean.json"):
         with open(filepath, encoding="UTF_8") as data:
             Theme.obj = json.load(data)
 
