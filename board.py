@@ -1,5 +1,6 @@
 from blocks import Blocks, Colors
 from theme import Theme
+import sys
 
 class Board():
     EMPTY_SQUARE = " "
@@ -9,48 +10,65 @@ class Board():
         Theme.load_theme()
         self.l = l
         self.w = w
-        self.board = [[(Board.EMPTY_SQUARE) for i in range(w)] for j in range(l)]
+        self.board = [[(Theme.char("empty")) for i in range(w)] for j in range(l)]
+        self.blocks = Blocks()
         self.next_block()
 
     def block_coords(self):
         return [[x + self.x, y + self.y] for x, y in self.block.coords()]
-
+    
     def at_pos(self, coords):
         x, y = coords
+        if not self.coords_valid(coords):
+            return None
         board_char = self.board[y][x]
-        if board_char != Board.EMPTY_SQUARE:
+        if board_char != Theme.char("empty"):
             return board_char
-        if coords in self.block_coords():
-            return self.block.char()
-        return Board.EMPTY_SQUARE
+        return Theme.char("empty")
+
+    def print_at_pos(self, coords):
+        return self.block.char() if coords in self.block_coords() else self.at_pos(coords)
     
-    def position_valid(self):
-        for x, y in self.block_coords():
-            if x < 0 or x >= self.w or y >= self.l or (y >= 0 and self.board[y][x] != Board.EMPTY_SQUARE):
+    def coords_valid(self, coords):
+        x, y = coords
+        return not (x < 0 or x >= self.w or y >= self.l or (y >= 0 and self.board[y][x] != Theme.char("empty")))
+    
+    def block_valid(self):
+        for coords in self.block_coords():
+            if self.coords_valid(coords):
                 return False
         return True
 
     def next_block(self):
-        self.block = Blocks.next()
+        self.block = self.blocks.next()
         self.x = int(self.w / 2 - self.block.size() / 2)
         self.y = 0
+
+    def block_grounded(self):
+        coords_list = self.block_coords()
+        for coords in coords_list:
+            coords[1] += 1
+            at_pos = self.at_pos(coords)
+            if at_pos != Theme.char("empty") and at_pos != None:
+                return True
+        return False
 
     def print(self):
         """Prints the current state of the board in a frame."""
 
         console_width = self.w * 2 + 1
-        board_str = Board.BOARD_COLOR + Theme.char("tl") + Theme.char("hor") * console_width + Theme.char("tr") + '\n'
+        board_str = "\x1b[2J\x1b[H" + Board.BOARD_COLOR + Theme.char("tl") + Theme.char("hor") * console_width + Theme.char("tr") + '\n'
 
         for y in range(self.l):
-            board_str += Theme.char("vert") + " "
+            board_str += Theme.char("vert") + Theme.char("space")
             for x in range(self.w):
-                board_str += self.at_pos([x, y]) + Board.BOARD_COLOR + " "
+                board_str += self.print_at_pos([x, y]) + Board.BOARD_COLOR + Theme.char("space")
             board_str += Theme.char("vert") + "\n"
 
         board_str += Theme.char("bl") + Theme.char("hor") * console_width + Theme.char("br") + '\n'
 
-        print("\x1b[2J\x1b[H")
-        print(board_str)
+        sys.stdout.write(board_str)
+        sys.stdout.flush()
 
     def find_filled_rows(self):
         """Finds all rows that are completely filled and ready for clearing.
@@ -63,7 +81,7 @@ class Board():
         for i in range(self.l):
             count = 0
             for j in range(self.w):
-                if self.board[i][j] == Board.EMPTY_SQUARE:
+                if self.board[i][j] == Theme.char("empty"):
                     break
                 count += 1
             if count == self.w:
@@ -78,7 +96,7 @@ class Board():
         """
 
         self.board.pop(index)
-        self.board.insert(index, [(Board.EMPTY_SQUARE) for i in range(self.w)])
+        self.board.insert(index, [(Theme.char("empty")) for i in range(self.w)])
 
     def move_down(self):
         self.y += 1

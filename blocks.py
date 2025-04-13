@@ -60,7 +60,7 @@ class Block():
         return self.color + Theme.char("block") + Colors.RESET
 
 class Blocks:
-    block_list = [
+    _block_list = [
         Block([
             [0, 0, 0, 0],
             [1, 1, 1, 1],
@@ -104,5 +104,17 @@ class Blocks:
         ], Colors.RED),
     ]
 
-    def next():
-        return Block.copy(Blocks.block_list[random.randint(0, len(Blocks.block_list) - 1)])
+    def __init__(self):
+        self._new_permutation()
+
+    def _new_permutation(self):
+        self._block_perm = Blocks._block_list
+        random.shuffle(self._block_perm)
+        self._index = 0
+
+    def next(self):
+        block = self._block_perm[self._index]
+        self._index += 1
+        if self._index >= len(Blocks._block_list):
+            self._new_permutation()
+        return Block.copy(block)

@@ -6,9 +6,9 @@
         "tr": "┓",
         "bl": "┗",
         "br": "┛",
-        "block": "❏",
+        "block": "■",
         "shadow": "□",
-        "empty": "⬝",
+        "empty": " ",
         "space": " "
     },
 

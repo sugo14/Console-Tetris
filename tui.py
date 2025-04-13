@@ -12,36 +12,44 @@ class Keys():
         "right": 0x27
     }
 
-    def get_code(key):
-        if len(key) == 1 and ord(key) >= ord('a') and ord(key) <= ord('z'):
-            return ord(key) - ord('a') + 0x41
-        elif key in Keys.vk_codes:
-            return Keys.vk_codes[key]
-        return None
+    _now_down = []
+    _last_down = []
+    _first_down = []
 
-    def code_down(vk_code):
-        return ctypes.windll.user32.GetAsyncKeyState(vk_code) & 0x8000 != 0
-        
+    def update():
+        Keys._last_down = Keys._now_down
+        Keys._now_down = [chr(i) for i in range(ord('a'), ord('z') + 1) if Keys._down(chr(i))]
+        Keys._now_down += [name for name in Keys.vk_codes if Keys._down(name)]
+        Keys._first_down = [key for key in Keys._now_down if key not in Keys._last_down]
+        return Keys._down
+    
     def down(key):
-        vk_code = Keys.get_code(key)
-        return None if vk_code == None else Keys.code_down(vk_code)
+        return key in Keys._now_down
     
     def all_down():
-        keys = []
-        for i in range(ord('a'), ord('z') + 1):
-            if Keys.down(chr(i)):
-                keys.append(chr(i))
-        for name in Keys.vk_codes:
-            if Keys.down(name):
-                keys.append(name)
-        return keys
+        return Keys._now_down
+
+    def first_down(key):
+        return key in Keys._first_down
+    
+    def all_first_down():
+        return Keys._first_down
+
+    def _get_code(key):
+        if len(key) == 1 and ord('a') <= ord(key) <= ord('z'):
+            return ord(key) - ord('a') + 0x41
+        return Keys.vk_codes[key] if key in Keys.vk_codes else None
+    
+    def _down(key):
+        vk_code = Keys._get_code(key)
+        return None if vk_code == None else Keys._code_down(vk_code)
+
+    def _code_down(vk_code):
+        return ctypes.windll.user32.GetAsyncKeyState(vk_code) & 0x8000 != 0
     
 class Screen():
     def ANSI(args):
-        if args is str:
-            return f"\x1b[{args}"   
-        ansi = [f"\x1b[{arg}" for arg in args]
-        return "".join(ansi)
+        return f"\x1b[{args}" if args is str else "".join([f"\x1b[{arg}" for arg in args])
     
     def clear():
         return Screen.ANSI(["2J", "H"])

@@ -11,7 +11,6 @@ Screen.show_cursor(False)
 
 def update():
     board.print()
-    print(board.position_valid())
 
 def move_down():
     global timer
@@ -23,17 +22,18 @@ while True:
     curr_time = time.time()
     timer += curr_time - last_time
     last_time = curr_time
+    Keys.update()
     if timer > move_time:
         move_down()
-    if Keys.down('a'):
+    if Keys.first_down('a'):
         board.move_left()
-    if Keys.down('d'):
+    if Keys.first_down('d'):
         board.move_right()
-    if Keys.down('w'):
+    if Keys.first_down('w'):
         board.rotate()
-    if Keys.down('s'):
+    if Keys.first_down('s'):
         move_down()
-    if Keys.down(' '):
+    if Keys.first_down(' '):
         board.next_block()
-    if len(Keys.all_down()) > 0:
+    if len(Keys.all_first_down()) > 0:
         update()
