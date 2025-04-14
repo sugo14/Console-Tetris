@@ -1,17 +1,18 @@
 import random
 from theme import Theme
 
+class Square():
+    EMPTY = 0
+    I = 1
+    J = 2
+    L = 3
+    O = 4
+    S = 5
+    T = 6
+    Z = 7
+
 def color(r, g, b):
     return f"\x1b[38;2;{r};{g};{b}m"
-
-""" class Color():
-    def __init__(self, r, g, b):
-        self.r = r
-        self.g = g
-        self.b = b
-
-    def __str__(self):
-        return f"\x1b[38;2;{self.r};{self.g};{self.b}m" """
     
 class Colors():
     RED = color(255, 0, 0)

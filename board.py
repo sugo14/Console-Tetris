@@ -19,8 +19,8 @@ class Board():
     
     def at_pos(self, coords):
         x, y = coords
-        if not self.coords_valid(coords):
-            return None
+        if not self.coords_in_bounds(coords):
+            return '0'
         board_char = self.board[y][x]
         if board_char != Theme.char("empty"):
             return board_char
@@ -29,29 +29,48 @@ class Board():
     def print_at_pos(self, coords):
         return self.block.char() if coords in self.block_coords() else self.at_pos(coords)
     
-    def coords_valid(self, coords):
+    def coords_in_bounds(self, coords):
         x, y = coords
-        return not (x < 0 or x >= self.w or y >= self.l or (y >= 0 and self.board[y][x] != Theme.char("empty")))
+        return x >= 0 and x < self.w and y >= 0 and y < self.l
+    
+    def block_coords_valid(self, coords):
+        x, y = coords
+        return x >= 0 and x < self.w and y < self.l and (y < 0 or (y >= 0 and self.board[y][x] == Theme.char("empty")))
     
     def block_valid(self):
         for coords in self.block_coords():
-            if self.coords_valid(coords):
+            if not self.block_coords_valid(coords):
                 return False
         return True
 
     def next_block(self):
         self.block = self.blocks.next()
         self.x = int(self.w / 2 - self.block.size() / 2)
-        self.y = 0
+        self.y = -self.block.size() + 1
 
     def block_grounded(self):
         coords_list = self.block_coords()
         for coords in coords_list:
             coords[1] += 1
-            at_pos = self.at_pos(coords)
-            if at_pos != Theme.char("empty") and at_pos != None:
+            if not self.block_coords_valid(coords):
                 return True
         return False
+
+    def place_square(self, coords, char):
+        if not self.coords_in_bounds(coords):
+            raise RuntimeError(f"Coords {coords} out of bounds, {char} could not be placed.")
+        x, y = coords
+        self.board[y][x] = char
+    
+    def place_block(self):
+        for coords in self.block_coords():
+            self.place_square(coords, self.block.char())
+    
+    def drop_block(self):
+        while not self.block_grounded():
+            self.move_down()
+        self.place_block()
+        self.next_block()
 
     def print(self):
         """Prints the current state of the board in a frame."""
@@ -100,12 +119,18 @@ class Board():
 
     def move_down(self):
         self.y += 1
+        if not self.block_valid():
+            self.y -= 1
 
     def move_left(self):
         self.x -= 1
+        if not self.block_valid():
+            self.x += 1
     
     def move_right(self):
         self.x += 1
+        if not self.block_valid():
+            self.x -= 1
 
     def rotate(self):
         self.block = self.block.rotated()

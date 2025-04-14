@@ -2,7 +2,7 @@ import winsound, time
 
 class Audio:
     def __init__(self, bpm, notes):
-        self.bpm = bpm * 1.5
+        self.bpm = bpm * 1.1
         self.notes = notes
 
 def format(filepath):

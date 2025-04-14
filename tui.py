@@ -46,7 +46,7 @@ class Keys():
 
     def _code_down(vk_code):
         return ctypes.windll.user32.GetAsyncKeyState(vk_code) & 0x8000 != 0
-    
+
 class Screen():
     def ANSI(args):
         return f"\x1b[{args}" if args is str else "".join([f"\x1b[{arg}" for arg in args])
@@ -55,7 +55,7 @@ class Screen():
         return Screen.ANSI(["2J", "H"])
 
     def show_cursor(show):
-        return Screen.ANSI("?25" + ("h" if show == True else "l"))
+        return Screen.ANSI("?25" + ("h" if show else "l"))
 
     def move_cursor(line, column):
         return Screen.ANSI(f"{line};{column}H")
