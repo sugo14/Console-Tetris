@@ -1,10 +1,10 @@
-from board import Board
+from console_board import ConsoleBoard
 import time
 from tui import Keys, Screen
 from audio import Audio
 import threading
 
-board = Board()
+board = ConsoleBoard()
 last_time = time.perf_counter()
 move_time = 1.2
 timer = 0

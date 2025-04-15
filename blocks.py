@@ -18,7 +18,7 @@ class Colors():
 
     RESET = "\x1b[0m"
 
-class ID():
+class Square():
     _pairs = (
         ("empty", 0),
         ("I", 1),
@@ -31,13 +31,13 @@ class ID():
     )
 
     def id(name_of_id):
-        for name, id in ID._pairs:
+        for name, id in Square._pairs:
             if name == name_of_id:
                 return id
         raise RuntimeError(f"ID could not be found for name {name_of_id}")
     
     def name(id_of_name):
-        for name, id in ID._pairs:
+        for name, id in Square._pairs:
             if id == id_of_name:
                 return name
         raise RuntimeError(f"Name could not be found for ID {id_of_name}")
@@ -71,12 +71,12 @@ class Block():
             block = block.cw_rotated()
         return block
     
-    def coords(self):
+    def to_list(self):
         coords = []
         for i in range(len(self.shape)):
             for j in range(len(self.shape[0])):
-                if self.shape[i][j] == 1:
-                    coords.append([len(self.shape) - i - 1, j])
+                if self.shape[i][j] != 0:
+                    coords.append(([len(self.shape) - i - 1, j], self.shape[i][j]))
         return coords
     
     """ def char(self):
@@ -89,42 +89,42 @@ class Blocks:
             [1, 1, 1, 1],
             [0, 0, 0, 0],
             [0, 0, 0, 0]
-        ], ID.id("I")),
+        ], Square.id("I")),
 
         Block([
             [1, 0, 0],
             [1, 1, 1],
             [0, 0, 0]
-        ], ID.id("J")),
+        ], Square.id("J")),
 
         Block([
             [0, 0, 1],
             [1, 1, 1],
             [0, 0, 0]
-        ], ID.id("L")),
+        ], Square.id("L")),
 
         Block([
             [1, 1],
             [1, 1]
-        ], ID.id("O")),
+        ], Square.id("O")),
 
         Block([
             [0, 1, 1],
             [1, 1, 0],
             [0, 0, 0]
-        ], ID.id("S")),
+        ], Square.id("S")),
 
         Block([
             [0, 1, 0],
             [1, 1, 1],
             [0, 0, 0]
-        ], ID.id("T")),
+        ], Square.id("T")),
 
         Block([
             [1, 1, 0],
             [0, 1, 1],
             [0, 0, 0]                                                                        
-        ], ID.id("Z")),
+        ], Square.id("Z"))
     ]
 
     def __init__(self):

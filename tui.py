@@ -59,3 +59,9 @@ class Screen():
 
     def move_cursor(line, column):
         return Screen.ANSI(f"{line};{column}H")
+    
+    def fg_color(r, g, b):
+        return Screen.ANSI(f"38;2;{r};{g};{b}m")
+    
+    def reset_fg_color():
+        return Screen.ANSI(f"0m")
