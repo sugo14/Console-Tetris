@@ -1,15 +1,4 @@
 import random
-from theme import Theme
-
-class Square():
-    EMPTY = 0
-    I = 1
-    J = 2
-    L = 3
-    O = 4
-    S = 5
-    T = 6
-    Z = 7
 
 def color(r, g, b):
     return f"\x1b[38;2;{r};{g};{b}m"
@@ -29,25 +18,58 @@ class Colors():
 
     RESET = "\x1b[0m"
 
+class ID():
+    _pairs = (
+        ("empty", 0),
+        ("I", 1),
+        ("J", 2),
+        ("L", 3),
+        ("O", 4),
+        ("S", 5),
+        ("T", 6),
+        ("Z", 7)
+    )
+
+    def id(name_of_id):
+        for name, id in ID._pairs:
+            if name == name_of_id:
+                return id
+        raise RuntimeError(f"ID could not be found for name {name_of_id}")
+    
+    def name(id_of_name):
+        for name, id in ID._pairs:
+            if id == id_of_name:
+                return name
+        raise RuntimeError(f"Name could not be found for ID {id_of_name}")
+
 class Block():
-    def __init__(self, shape, color):
+    def __init__(self, shape, id = -1):
         self.shape = shape
-        self.color = color
+        for i in range(len(self.shape)):
+            for j in range(len(self.shape[0])):
+                if id != -1 and self.shape[i][j] == 1:
+                    self.shape[i][j] = id
 
     def copy(block):
-        return Block(block.shape, block.color)
+        return Block(block.shape)
     
     def size(self):
         return len(self.shape)
 
-    def rotated(self):
+    def cw_rotated(self):
         new_shape = []
         for i in range(len(self.shape) - 1, -1, -1):
             row = []
             for j in range(len(self.shape[0])):
                 row.append(self.shape[j][i])
             new_shape.append(row)
-        return Block(new_shape, self.color)
+        return Block(new_shape)
+    
+    def ccw_rotated(self):
+        block = Block.copy(self)
+        for i in range(3): # haha
+            block = block.cw_rotated()
+        return block
     
     def coords(self):
         coords = []
@@ -57,8 +79,8 @@ class Block():
                     coords.append([len(self.shape) - i - 1, j])
         return coords
     
-    def char(self):
-        return self.color + Theme.char("block") + Colors.RESET
+    """ def char(self):
+        return self.color + Theme.char("block") + Colors.RESET """
 
 class Blocks:
     _block_list = [
@@ -67,42 +89,42 @@ class Blocks:
             [1, 1, 1, 1],
             [0, 0, 0, 0],
             [0, 0, 0, 0]
-        ], Colors.CYAN),
+        ], ID.id("I")),
 
         Block([
             [1, 0, 0],
             [1, 1, 1],
             [0, 0, 0]
-        ], Colors.BLUE),
+        ], ID.id("J")),
 
         Block([
             [0, 0, 1],
             [1, 1, 1],
             [0, 0, 0]
-        ], Colors.ORANGE),
+        ], ID.id("L")),
 
         Block([
             [1, 1],
             [1, 1]
-        ], Colors.YELLOW),
+        ], ID.id("O")),
 
         Block([
             [0, 1, 1],
             [1, 1, 0],
             [0, 0, 0]
-        ], Colors.GREEN),
+        ], ID.id("S")),
 
         Block([
             [0, 1, 0],
             [1, 1, 1],
             [0, 0, 0]
-        ], Colors.PURPLE),
+        ], ID.id("T")),
 
         Block([
             [1, 1, 0],
             [0, 1, 1],
-            [0, 0, 0]
-        ], Colors.RED),
+            [0, 0, 0]                                                                        
+        ], ID.id("Z")),
     ]
 
     def __init__(self):
