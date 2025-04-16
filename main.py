@@ -3,16 +3,18 @@ import time
 from tui import Keys
 from audio import Audio
 from tui import Screen
+import threading
+
+AUDIO = False
 
 board = ConsoleBoard()
 last_time = time.perf_counter()
 move_time = 1.2
 timer = 0
 
-Screen.show_cursor(False)
-
 def update():
     board.print()
+    print(board.points)
 
 def move_down():
     global timer
@@ -28,10 +30,13 @@ def play_audio():
         Audio.compile("main_song").play()
 
 if __name__ == "__main__":
-    """ thread = threading.Thread(target=play_audio)
-    thread.start() """
+    if AUDIO:
+        thread = threading.Thread(target=play_audio)
+        thread.start()
 
+    print(Screen.show_cursor(False))
     update()
+
     while True:
         curr_time = time.perf_counter()
         timer += curr_time - last_time

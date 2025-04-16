@@ -5,8 +5,9 @@ class Board():
     def __init__(self, l = 20, w = 10):
         self.l = l
         self.w = w
-        self.board = [[(Square.id("empty")) for i in range(w)] for j in range(l)]
+        self.board = [[Square.id("empty")] * w for _ in range(l)]
         self.blocks = Blocks()
+        self.points = 0
         self.next_block()
 
     def block_square_list(self):
@@ -20,6 +21,15 @@ class Board():
         if board_square != Square.id("empty"):
             return board_square
         return Square.id("empty")
+    
+    def points_formula(row_cnt):
+        return row_cnt * row_cnt * 500
+    
+    def update_rows(self):
+        rows = self.find_filled_rows()
+        self.points += Board.points_formula(len(rows))
+        for row in rows:
+            self.clear_row(row)
 
     # TODO: how do i name this function?
     def appearance_at_pos(self, coords):
@@ -79,16 +89,7 @@ class Board():
             list: The rows that are ready to be cleared.
         """
 
-        rows = []
-        for i in range(self.l):
-            count = 0
-            for j in range(self.w):
-                if self.board[i][j] == Square.id("empty"):
-                    break
-                count += 1
-            if count == self.w:
-                rows.append(i)
-        return rows
+        return [i for i in range(self.l) if Square.id("empty") not in self.board[i]]
     
     def clear_row(self, index):
         """Deletes a row at an index and adds an empty row in its place.
@@ -98,9 +99,10 @@ class Board():
         """
 
         self.board.pop(index)
-        self.board.insert(index, [(Square.id("empty")) for i in range(self.w)])
+        self.board.insert(0, [(Square.id("empty"))] * self.w)
 
     def move_down(self):
+        self.update_rows() # TODO: i don't know if this update should be here
         self.y += 1
         if not self.block_valid():
             self.y -= 1

@@ -47,9 +47,10 @@ class Block():
             new_shape.append(row)
         return Block(new_shape)
     
+    # this is awful
     def ccw_rotated(self):
         block = Block.copy(self)
-        for i in range(3): # haha
+        for i in range(3):
             block = block.cw_rotated()
         return block
     
@@ -114,9 +115,13 @@ class Blocks:
         random.shuffle(self._block_perm)
         self._index = 0
 
-    def next(self):
+    def peek(self):
         block = self._block_perm[self._index]
+        return Block.copy(block)
+
+    def next(self):
+        block = self.peek()
         self._index += 1
         if self._index >= len(Blocks._block_list):
             self._new_permutation()
-        return Block.copy(block)
+        return block
