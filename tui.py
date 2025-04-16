@@ -21,7 +21,7 @@ class Keys():
         Keys._now_down = [chr(i) for i in range(ord('a'), ord('z') + 1) if Keys._down(chr(i))]
         Keys._now_down += [name for name in Keys.vk_codes if Keys._down(name)]
         Keys._first_down = [key for key in Keys._now_down if key not in Keys._last_down]
-        return Keys._down
+        return Keys._first_down
     
     def down(key):
         return key in Keys._now_down
@@ -49,7 +49,7 @@ class Keys():
 
 class Screen():
     def ANSI(args):
-        return f"\x1b[{args}" if args is str else "".join([f"\x1b[{arg}" for arg in args])
+        return f"\x1b[{args}" if isinstance(args, str) else "".join([f"\x1b[{arg}" for arg in args])
     
     def clear():
         return Screen.ANSI(["2J", "H"])
@@ -59,3 +59,9 @@ class Screen():
 
     def move_cursor(line, column):
         return Screen.ANSI(f"{line};{column}H")
+    
+    def fg_color(r, g, b):
+        return Screen.ANSI(f"38;2;{r};{g};{b}m")
+    
+    def reset_fg_color():
+        return Screen.ANSI(f"0m")
