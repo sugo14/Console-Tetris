@@ -1,23 +1,5 @@
 import random
 
-def color(r, g, b):
-    return f"\x1b[38;2;{r};{g};{b}m"
-    
-class Colors():
-    RED = color(255, 0, 0)
-    GREEN = color(0, 255, 0)
-    BLUE = color(0, 0, 255)
-
-    YELLOW = color(255, 255, 0)
-    CYAN = color(0, 255, 255)
-    PURPLE = color(128, 0, 128)
-    ORANGE = color(255, 127, 0)
-
-    WHITE = color(255, 255, 255)
-    GREY = color(127, 127, 127)
-
-    RESET = "\x1b[0m"
-
 class Square():
     _pairs = (
         ("empty", 0),
@@ -78,9 +60,6 @@ class Block():
                 if self.shape[i][j] != 0:
                     coords.append(([len(self.shape) - i - 1, j], self.shape[i][j]))
         return coords
-    
-    """ def char(self):
-        return self.color + Theme.char("block") + Colors.RESET """
 
 class Blocks:
     _block_list = [

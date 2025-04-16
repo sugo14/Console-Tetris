@@ -30,4 +30,4 @@ class Theme():
         return self._colorize(["chars", "space"], ["fg", "frame"])
     
     def empty_board_char(self):
-        return self._colorize(["chars", "space"], ["fg", "frame"])
+        return self._colorize(["chars", "empty"], ["fg", "frame"])

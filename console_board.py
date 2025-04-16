@@ -21,10 +21,9 @@ class ConsoleBoard(Board):
                 char_pos = self.theme.empty_board_char()
 
                 square_pos = self.appearance_at_pos([x, y])
-                if square_pos != 0:
+                if square_pos != Square.id("empty"):
                     char_pos = self.theme.tet_char(Square.name(square_pos))
 
-                # TODO: board.board_color???
                 board_str += char_pos + self.theme.board_space_char()
             board_str += self.theme.frame_char("vert") + "\n"
 

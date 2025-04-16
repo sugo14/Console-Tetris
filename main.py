@@ -1,8 +1,8 @@
 from console_board import ConsoleBoard
 import time
-from tui import Keys, Screen
+from tui import Keys
 from audio import Audio
-import threading
+from tui import Screen
 
 board = ConsoleBoard()
 last_time = time.perf_counter()
@@ -13,7 +13,6 @@ Screen.show_cursor(False)
 
 def update():
     board.print()
-    print(board.find_filled_rows())
 
 def move_down():
     global timer
