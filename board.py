@@ -1,5 +1,4 @@
-from blocks import Blocks
-from blocks import Square
+from blocks import Blocks, Square, WallKicks
 
 class Board():
     def __init__(self, l = 20, w = 10):
@@ -55,7 +54,7 @@ class Board():
     def next_block(self):
         self.block = self.blocks.next()
         self.x = int(self.w / 2 - self.block.size() / 2)
-        self.y = -self.block.size() + 1
+        self.y = 0
 
     def block_grounded(self):
         coords_list = self.block_square_list()
@@ -118,4 +117,29 @@ class Board():
             self.x -= 1
 
     def rotate(self):
+        last_rotation = self.block.rotation
         self.block = self.block.cw_rotated()
+        curr_rotation = self.block.rotation
+
+        index = 0
+        wall_kicks = WallKicks.kicks(self.block.id, last_rotation, curr_rotation)
+
+        # try wall kicks
+        while index < len(wall_kicks):
+            x_offset, y_offset = wall_kicks[index]
+            y_offset = -y_offset # my board is inverted lmao
+
+            self.x += x_offset
+            self.y += y_offset
+
+            if self.block_valid():
+                return
+            index += 1
+
+            # revert
+            self.x -= x_offset
+            self.y -= y_offset
+
+        # revert rotation
+        self.block = self.block.ccw_rotated()
+

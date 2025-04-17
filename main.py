@@ -11,10 +11,10 @@ board = ConsoleBoard()
 last_time = time.perf_counter()
 move_time = 1.2
 timer = 0
+paused = False
 
 def update():
     board.print()
-    print(board.points)
 
 def move_down():
     global timer
@@ -38,6 +38,13 @@ if __name__ == "__main__":
     update()
 
     while True:
+        # this doesnt work
+        if Keys.first_down('p'):
+            paused = not paused
+        if paused:
+            last_time = time.perf_counter()
+            continue
+
         curr_time = time.perf_counter()
         timer += curr_time - last_time
         last_time = curr_time
