@@ -2,12 +2,14 @@ from board import Board
 from theme import Theme
 from blocks import Square
 from tui import Screen
+from score_window import ScoreWindow
 import sys
 
 class ConsoleBoard(Board):
     def __init__(self, l = 20, w = 10):
         Board.__init__(self, l, w)
         self.theme = Theme()
+        self.score_window = ScoreWindow()
 
     def print(self):
         """Prints the current state of the board in a frame."""
@@ -31,3 +33,5 @@ class ConsoleBoard(Board):
 
         sys.stdout.write(board_str)
         sys.stdout.flush()
+
+        self.score_window.update(self.points)
