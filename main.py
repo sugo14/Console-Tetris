@@ -35,7 +35,7 @@ if __name__ == "__main__":
         thread.start()
 
     print(Screen.show_cursor(False))
-    update()
+    board.print_first()
 
     while True:
         # this doesnt work
@@ -48,6 +48,7 @@ if __name__ == "__main__":
         curr_time = time.perf_counter()
         timer += curr_time - last_time
         last_time = curr_time
+        
         Keys.update()
         if timer > move_time:
             move_down()

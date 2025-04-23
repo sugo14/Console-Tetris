@@ -11,7 +11,7 @@ class ConsoleBoard(Board):
         self.theme = Theme()
         self.score_window = ScoreWindow()
 
-    def print(self):
+    def print_first(self):
         """Prints the current state of the board in a frame."""
 
         console_width = self.w * 2 + 1
@@ -35,3 +35,27 @@ class ConsoleBoard(Board):
         sys.stdout.flush()
 
         self.score_window.update(self.points)
+        self.last_board = self.board.copy()
+
+    def print(self):
+        filled_rows = self.find_filled_rows()
+
+        for y in range(self.l):
+            for x in range(self.w):
+                """ if self.last_board[y][x] == self.board[y][x]:
+                    continue """
+                
+                print(self.theme.filled_row_char())
+                if y in filled_rows:
+                    print(Screen.move_cursor(x * 2 + 3, y + 2) + self.theme.filled_row_char())
+
+                char_pos = self.theme.empty_board_char()
+
+                square_pos = self.appearance_at_pos([x, y])
+                if square_pos != Square.id("empty"):
+                    char_pos = self.theme.tet_char(Square.name(square_pos))
+
+                print(Screen.move_cursor(x * 2 + 3, y + 2) + char_pos)
+
+        sys.stdout.flush()
+        self.last_board = self.board.copy()

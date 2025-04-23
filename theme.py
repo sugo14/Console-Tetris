@@ -31,3 +31,6 @@ class Theme():
     
     def empty_board_char(self):
         return self._colorize(["chars", "empty"], ["fg", "frame"])
+    
+    def filled_row_char(self):
+        return self._colorize(["chars", "filled"], ["fg", "filled"])

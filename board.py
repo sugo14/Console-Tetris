@@ -52,6 +52,7 @@ class Board():
         return True
 
     def next_block(self):
+        # TODO: fix spawn elevation and rotation
         self.block = self.blocks.next()
         self.x = int(self.w / 2 - self.block.size() / 2)
         self.y = 0
