@@ -8,54 +8,66 @@ import sys
 class ConsoleBoard(Board):
     def __init__(self, l = 20, w = 10):
         Board.__init__(self, l, w)
-        self.theme = Theme()
-        self.score_window = ScoreWindow()
+        self._theme = Theme()
+        self._score_window = ScoreWindow()
 
     def print_first(self):
         """Prints the current state of the board in a frame."""
 
-        console_width = self.w * 2 + 1
-        board_str = Screen.clear() + self.theme.frame_char("tl") + self.theme.frame_char("hor") * console_width + self.theme.frame_char("tr") + '\n'
+        console_width = self._w * 2 + 1
+        board_str = Screen.clear() + self._theme.frame_char("tl") + self._theme.frame_char("hor") * console_width + self._theme.frame_char("tr") + '\n'
 
-        for y in range(self.l):
-            board_str += self.theme.frame_char("vert") + self.theme.frame_char("space")
-            for x in range(self.w):
-                char_pos = self.theme.empty_board_char()
+        for y in range(self._l):
+            board_str += self._theme.frame_char("vert") + self._theme.frame_char("space")
+            for x in range(self._w):
+                char_pos = self._theme.empty_board_char()
 
-                square_pos = self.appearance_at_pos([x, y])
+                square_pos = self._appearance_at_pos([x, y])
                 if square_pos != Square.id("empty"):
-                    char_pos = self.theme.tet_char(Square.name(square_pos))
+                    char_pos = self._theme.tet_char(Square.name(square_pos))
 
-                board_str += char_pos + self.theme.board_space_char()
-            board_str += self.theme.frame_char("vert") + "\n"
+                board_str += char_pos + self._theme.board_space_char()
+            board_str += self._theme.frame_char("vert") + "\n"
 
-        board_str += self.theme.frame_char("bl") + self.theme.frame_char("hor") * console_width + self.theme.frame_char("br") + '\n'
+        board_str += self._theme.frame_char("bl") + self._theme.frame_char("hor") * console_width + self._theme.frame_char("br") + '\n'
 
         sys.stdout.write(board_str)
         sys.stdout.flush()
 
-        self.score_window.update(self.points)
-        self.last_board = self.board.copy()
+        self._score_window.update(self._points)
+        self._last_board = self._board.copy()
+        self._last_block_coords = [e[0] for e in self._block_square_list()]
 
     def print(self):
-        filled_rows = self.find_filled_rows()
+        """Updates the printed board using ANSI escape codes."""
+        
+        filled_rows = self._find_filled_rows()
+        curr_block_coords = [e[0] for e in self._block_square_list()]
 
-        for y in range(self.l):
-            for x in range(self.w):
-                """ if self.last_board[y][x] == self.board[y][x]:
-                    continue """
-                
-                print(self.theme.filled_row_char())
+        update_str = ""
+
+        for y in range(self._l):
+            for x in range(self._w):
+                coords = [x, y]
+
+                if (coords in self._last_block_coords == coords in curr_block_coords) and (self._last_board[y][x] == self._board[y][x]):
+                    continue
+
                 if y in filled_rows:
-                    print(Screen.move_cursor(x * 2 + 3, y + 2) + self.theme.filled_row_char())
+                    update_str += Screen.move_cursor(x * 2 + 3, y + 2) + self._theme.filled_row_char()
 
-                char_pos = self.theme.empty_board_char()
+                char_pos = self._theme.empty_board_char()
 
-                square_pos = self.appearance_at_pos([x, y])
+                square_pos = self._appearance_at_pos([x, y])
                 if square_pos != Square.id("empty"):
-                    char_pos = self.theme.tet_char(Square.name(square_pos))
+                    char_pos = self._theme.tet_char(Square.name(square_pos))
 
-                print(Screen.move_cursor(x * 2 + 3, y + 2) + char_pos)
+                update_str += Screen.move_cursor(x * 2 + 3, y + 2) + char_pos
+        
+        self._last_block_coords = curr_block_coords
 
+        self._score_window.update(self._points)
+        sys.stdout.write(update_str)
         sys.stdout.flush()
-        self.last_board = self.board.copy()
+
+        self._last_board = self._board.copy()
